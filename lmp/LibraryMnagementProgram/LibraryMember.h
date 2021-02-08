@@ -2,24 +2,25 @@
 #include "Books.h"
 #include <string>
 #include <map>
+#include <vector>
 using namespace std;
 class LibraryMember
 {
 private:
 	int library_member_number;
 	CString name;
-	map<int, CString> book_num_name_map;
+	vector<CString> book_num_vector;
+	vector<CString> book_name_vector;
 public:
 	LibraryMember();
-	LibraryMember(int _library_member_number, CString _name, int _book_num, CString _book_name);
+	LibraryMember(int _library_member_number, CString _name, CString _book_num, CString _book_name);
 	void borrow_book(Book& book);
-	void return_book(CString book_name);
+	void return_book(CString book_num);
 	
 	int get_member_num();
 	CString get_member_name();
-	map<int, CString>& get_book_num_name_map();
-
-	
+	vector<CString>& get_book_num_vector();
+	vector<CString>& get_book_name_vector();
 };
 
 

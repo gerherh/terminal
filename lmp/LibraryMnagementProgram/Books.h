@@ -16,5 +16,6 @@ public:
 	int get_book_number();
 	bool get_rental_status();
 	int get_borrower();
+	void returned();
 };
 

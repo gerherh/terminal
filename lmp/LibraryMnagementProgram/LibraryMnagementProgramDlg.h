@@ -59,10 +59,13 @@ public:
 	void get_all_data_from_book();
 	/*회원 번호 같은걸로 해당 행 업데이트 하는 함수 필요*/
 	void update_at_member_num_row();
-	vector<LibraryMember> members;
+	vector<LibraryMember> member_vector;
 	vector<Book> book_vector;
 	CString get_book_name_by_book_num(int book_number);
-	int is_book_exist(int book_number);
+	bool is_book_exist(int book_number);
+	int get_book_vector_index_by_book_number(int book_number);
+	int get_member_vector_index_by_member_number(int member_number);
+
 	bool is_member_exist(int member_number);
 	CEdit m_edit_rental_book_number;
 	CEdit m_edit_rental_member_number;
@@ -70,8 +73,7 @@ public:
 	CEdit m_edit_book_registration;
 	CEdit m_edit_book_search;
 	CString get_books_on_loan_by_member_num(int member_num);
-	
-	
+	CString CLibraryMnagementProgramDlg::get_book_numbers_on_loan_by_member_num(int member_num);
 
 	afx_msg void OnBnClickedBookDeleteButton();
 	CEdit m_edit_button_number_to_delete;

@@ -37,3 +37,8 @@ int Book::get_borrower()
 {
 	return borrower;
 }
+void Book::returned()
+{
+	rental_status = 0;
+	borrower = 0;
+}
