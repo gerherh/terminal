@@ -1,0 +1,5 @@
+mssql 설치
+ssms 설치
+db백업
+
+sql server configuration manger에서 네트워크 구성에서 tcp/ip 사용으로
