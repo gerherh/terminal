@@ -1,7 +1,8 @@
 [반납버튼]
 => 
-각 테이블 삭제 -> book, member vector로 새로 저장,
-새로 저장 후 get_all_data_from... 으로 프로그램상에 다시 데이터 업로드
+book, member vector에서 수정되는 부분이 있음
+각 테이블도 그에 알맞게 업데이트
+
 
 
 [회원 삭제] 
