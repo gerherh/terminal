@@ -27,3 +27,13 @@ int Book::get_book_number()
 {
 	return book_number;
 }
+
+bool Book::get_rental_status()
+{
+	return rental_status;
+}
+
+int Book::get_borrower()
+{
+	return borrower;
+}

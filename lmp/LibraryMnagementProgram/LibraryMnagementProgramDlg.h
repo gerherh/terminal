@@ -52,7 +52,8 @@ public:
 	void clear_list_ctrl();
 	CDatabase db;
 	CEdit m_edit_member_name_registration;
-	int get_last_member_number();
+	int get_last_member_num();
+	int get_last_book_num();
 	CEdit m_edit_delete_member;
 	void get_all_data_from_member();
 	void get_all_data_from_book();
@@ -60,6 +61,20 @@ public:
 	void update_at_member_num_row();
 	vector<LibraryMember> members;
 	vector<Book> book_vector;
+	CString get_book_name_by_book_num(int book_number);
+	int is_book_exist(int book_number);
+	bool is_member_exist(int member_number);
+	CEdit m_edit_rental_book_number;
+	CEdit m_edit_rental_member_number;
+	CEdit m_edit_return;
+	CEdit m_edit_book_registration;
+	CEdit m_edit_book_search;
+	CString get_books_on_loan_by_member_num(int member_num);
+	
+	
+
+	afx_msg void OnBnClickedBookDeleteButton();
+	CEdit m_edit_button_number_to_delete;
 };
 
 

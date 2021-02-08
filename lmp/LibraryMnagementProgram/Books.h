@@ -14,5 +14,7 @@ public:
 	void set_borrower(int _borrower);
 	CString get_book_name();
 	int get_book_number();
+	bool get_rental_status();
+	int get_borrower();
 };
 
