@@ -287,6 +287,10 @@ void CLibraryMnagementProgramDlg::OnBnClickedMemberDeleteButton()
 void CLibraryMnagementProgramDlg::OnBnClickedInformationButton()
 {
 
+	member_vector.clear();
+	book_vector.clear();
+	get_all_data_from_member();
+	get_all_data_from_book();
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	clear_list_ctrl();
 	// member 테이블에서 회원 번호와 이름만 가져와서 뿌려줄거임
@@ -403,12 +407,16 @@ void CLibraryMnagementProgramDlg::OnBnClickedRentalButton()
 	if (book_vector[book_vector_index].get_rental_status() == TRUE)
 	{
 		MessageBox(_T("대여중인 책입니다"));
+		GetDlgItem(ENTERED_MEMBER_REGISTRATION_NUMBER_TO_BORROW)->SetWindowText(_T("회원 번호"));
+		GetDlgItem(ENTERED_BOOK_NUMBER_TO_BORROW)->SetWindowText(_T("책 번호"));
 		return;
 	}
 	/*회원 번호 존재 확인*/
 	if (!is_member_exist(_ttoi(member_number_cstr)))
 	{
 		MessageBox(_T("회원 번호를 잘못 입력했습니다."));
+		GetDlgItem(ENTERED_MEMBER_REGISTRATION_NUMBER_TO_BORROW)->SetWindowText(_T("회원 번호"));
+		GetDlgItem(ENTERED_BOOK_NUMBER_TO_BORROW)->SetWindowText(_T("책 번호"));
 		return;
 	}
 	if (member_vector[get_member_vector_index_by_member_number(_ttoi(member_number_cstr))].get_book_num_vector().size() == 5)
@@ -416,6 +424,8 @@ void CLibraryMnagementProgramDlg::OnBnClickedRentalButton()
 		GetDlgItem(ENTERED_MEMBER_REGISTRATION_NUMBER_TO_BORROW)->SetWindowText(_T("회원 번호"));
 		GetDlgItem(ENTERED_BOOK_NUMBER_TO_BORROW)->SetWindowText(_T("책 번호"));
 		MessageBox(_T("5권까지만 빌릴수 있습니다."));
+		GetDlgItem(ENTERED_MEMBER_REGISTRATION_NUMBER_TO_BORROW)->SetWindowText(_T("회원 번호"));
+		GetDlgItem(ENTERED_BOOK_NUMBER_TO_BORROW)->SetWindowText(_T("책 번호"));
 		return;
 	}
 
@@ -514,10 +524,10 @@ void CLibraryMnagementProgramDlg::OnBnClickedReturnButton()
 		}
 		else
 		{
-			tmp.Format(_T(",%d"), member_vector[member_vector_index_num].get_book_num_vector()[i]);
-			book_number += tmp;
+			tmp = member_vector[member_vector_index_num].get_book_num_vector()[i];
+			book_number += _T(",") + tmp;
 			tmp = member_vector[member_vector_index_num].get_book_name_vector()[i];
-			book_name += tmp;
+			book_name += _T(",") + tmp;
 		}
 	}
 	if (book_number == _T(""))
