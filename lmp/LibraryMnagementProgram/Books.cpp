@@ -7,6 +7,11 @@ Book::Book()
 	book_number = 0;
 	borrower = 0;
 }
+Book::Book(int _book_number, CString _book_name)
+{
+	book_number = _book_number;
+	book_name = _book_name;
+}
 Book::Book(int _book_number, CString _book_name, bool _rental_status, int _borrower)
 {
 	book_name = _book_name;
@@ -42,3 +47,4 @@ void Book::returned()
 	rental_status = 0;
 	borrower = 0;
 }
+

@@ -1,15 +1,20 @@
 #include "pch.h"
 #include "LibraryMember.h"
 
-LibraryMember::LibraryMember()
+Member::Member()
 {
-	library_member_number = 0;
-	name = _T(" ");
+	member_number = 0;
+	member_name = _T(" ");
 }
-LibraryMember::LibraryMember(int _library_member_number, CString _name, CString _book_num, CString _book_name)
+Member::Member(int _library_member_number, CString _name)
 {
-	library_member_number = _library_member_number;
-	name = _name;
+	member_number = _library_member_number;
+	member_name = _name;
+}
+Member::Member(int _library_member_number, CString _name, CString _book_num, CString _book_name)
+{
+	member_number = _library_member_number;
+	member_name = _name;
 
 	CString   resToken;
 	int curPos = 0;
@@ -40,7 +45,7 @@ LibraryMember::LibraryMember(int _library_member_number, CString _name, CString 
 
 
 }
-void LibraryMember::borrow_book(Book& book)
+void Member::borrow_book(Book& book)
 {
 	CString book_number_cstr;
 	book_number_cstr.Format(_T("%d"), book.get_book_number());
@@ -48,7 +53,7 @@ void LibraryMember::borrow_book(Book& book)
 	book_num_vector.push_back(book_number_cstr);
 }
 
-void LibraryMember::return_book(CString book_num)
+void Member::return_book(CString book_num)
 {
 	for (int i = 0; i < get_book_num_vector().size(); i++)
 	{
@@ -61,22 +66,23 @@ void LibraryMember::return_book(CString book_num)
 	}
 }
 
-int LibraryMember::get_member_num()
+int Member::get_member_number()
 {
-	return library_member_number;
+	return member_number;
 }
-CString LibraryMember::get_member_name()
+CString Member::get_member_name()
 {
-	return name;
+	return member_name;
 }
 
 
-vector<CString>& LibraryMember::get_book_num_vector()
+vector<CString>& Member::get_book_num_vector()
 {
 	return book_num_vector;
 }
 
-vector<CString>& LibraryMember::get_book_name_vector()
+vector<CString>& Member::get_book_name_vector()
 {
 	return book_name_vector;
 }
+

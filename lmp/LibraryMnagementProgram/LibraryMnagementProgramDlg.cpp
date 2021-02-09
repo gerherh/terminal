@@ -8,8 +8,6 @@
 #include "LibraryMnagementProgramDlg.h"
 #include "afxdialogex.h"
 
-
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -226,7 +224,7 @@ void CLibraryMnagementProgramDlg::OnBnClickedMemberRegistrationButton()
 	}
 	else
 	{
-		new_member_num = member_vector[member_vector.size() - 1].get_member_num() + 1;
+		new_member_num = member_vector[member_vector.size() - 1].get_member_number() + 1;
 	}
 	
 	CString cquery;
@@ -243,16 +241,19 @@ void CLibraryMnagementProgramDlg::OnBnClickedMemberRegistrationButton()
 		int errCode = e->ReportError();
 	}
 	GetDlgItem(ENTERED_MEMBER_NAME_TO_REGISTRATION)->SetWindowText(_T("이름 입력"));
-	member_vector.clear();
-	book_vector.clear();
-	get_all_data_from_member();
-	get_all_data_from_book();
+	
+	member_vector.push_back(Member(new_member_num, member_name_cstr));
+	//member_vector.clear();
+	//book_vector.clear();
+	//get_all_data_from_member();
+	//get_all_data_from_book();
 }
 
 
 void CLibraryMnagementProgramDlg::OnBnClickedMemberDeleteButton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	int member_vector_index;
 	CString member_number_cstr;
 	CString cquery;
 	m_edit_delete_member.GetWindowTextW(member_number_cstr);
@@ -275,12 +276,9 @@ void CLibraryMnagementProgramDlg::OnBnClickedMemberDeleteButton()
 		int errCode = e->ReportError();
 	}
 	GetDlgItem(ENTERED_MEMBER_NUMBER_TO_DELETE)->SetWindowText(_T("회원 번호 입력"));
-	member_vector.clear();
-	book_vector.clear();
-	get_all_data_from_member();
-	get_all_data_from_book();
-	
-	
+
+	member_vector_index = get_member_vector_index_by_member_number(_ttoi(member_number_cstr));
+	member_vector.erase(member_vector.begin() + member_vector_index);
 }
 
 /*회원정보 출력*/
@@ -318,13 +316,13 @@ void CLibraryMnagementProgramDlg::OnBnClickedInformationButton()
 
 			case 0:
 				/*member_number*/
-				cstr_member_num.Format(_T("%d"), member_vector[row].get_member_num());
-				list_ctrl.SetItem(row, col, LVIF_TEXT, cstr_member_num, 0, 0, 0, NULL);
+				cstr_member_num.Format(_T("%d"), member_vector[row].get_member_number());
+				list_ctrl.SetItem(row, col, LVIF_TEXT, cstr_member_num.TrimRight(_T(" ")), 0, 0, 0, NULL);
 				break;
 				/*member_name*/
 			case 1:
 				
-				list_ctrl.SetItem(row, col, LVIF_TEXT, member_vector[row].get_member_name(), 0, 0, 0, NULL);
+				list_ctrl.SetItem(row, col, LVIF_TEXT, member_vector[row].get_member_name().TrimRight(_T(" ")), 0, 0, 0, NULL);
 				break;
 				/*book_number*/
 			case 2:
@@ -378,6 +376,7 @@ void CLibraryMnagementProgramDlg::OnBnClickedInformationButton()
 			}
 		}
 	}
+
 }
 
 void CLibraryMnagementProgramDlg::OnBnClickedRentalButton()
@@ -429,10 +428,7 @@ void CLibraryMnagementProgramDlg::OnBnClickedRentalButton()
 		return;
 	}
 
-	/*member 테이블에서 빌리는 사람의 회원 번호에 해당하는 행에 빌리는 책 번호와 이름 입력*/
-	/* 여기서 대여할때 회원 번호 사람이 기존에 빌리고 있던 책 이름 + 새로 빌리는 책 합친 문자열을 아래 쿼리로 넣어야함*/
-	/* 마찬가지로 책 번호도 기존에 갖고있던거 + 새로 추가된걸로 업데이트*/
-	books_on_loan = get_books_on_loan_by_member_num(_ttoi(member_number_cstr));
+	books_on_loan = get_a_list_of_books_on_loan_by_number(_ttoi(member_number_cstr));
 	if (books_on_loan == "")
 	{
 		new_books_on_loan = _T('\'') + book_name.TrimRight(_T(" ")) + _T('\'');
@@ -442,7 +438,7 @@ void CLibraryMnagementProgramDlg::OnBnClickedRentalButton()
 		new_books_on_loan = _T('\'') + books_on_loan + _T(',') + book_name.TrimRight(_T(" ")) + _T('\'');
 	}
 
-	book_nums_on_loan = get_book_numbers_on_loan_by_member_num(_ttoi(member_number_cstr));
+	book_nums_on_loan = get_the_numbers_of_the_books_on_loan_byn_umber(_ttoi(member_number_cstr));
 	if (book_nums_on_loan == "")
 	{
 		new_book_num_on_loan = _T('\'') + book_num.TrimRight(_T(" ")) + _T('\'');
@@ -452,8 +448,6 @@ void CLibraryMnagementProgramDlg::OnBnClickedRentalButton()
 		new_book_num_on_loan = _T('\'') + book_nums_on_loan + _T(',') + book_num.TrimRight(_T(" ")) + _T('\'');
 	}
 
-	/* 기존에 갖고 있는 책 읽어오고 새로 빌리려는 책 이름과 합쳐야함*/
-	/* 기존에 갖고 있는 책 이름은 member테이블에서 회원 번호로 해당 행 찾고 그 행에서 book_name을 얻어와야함*/
 	cquery.Format(_T("UPDATE [dbo].[member]SET[book_number] = %s, [book_name] = %s WHERE[member_number] = %d"),
 		new_book_num_on_loan,
 		new_books_on_loan,
@@ -469,14 +463,13 @@ void CLibraryMnagementProgramDlg::OnBnClickedRentalButton()
 		db.ExecuteSQL(cquery);
 		db.ExecuteSQL(cquery1);
 	}
-	catch (CDBException* e) //에러 확인.
+	catch (CDBException* e) 
 	{
 		int errCode = e->ReportError();
 	}
-	member_vector.clear();
-	book_vector.clear();
-	get_all_data_from_member();
-	get_all_data_from_book();
+	member_vector[_ttoi(member_number_cstr)].borrow_book(book_vector[book_vector_index]);
+	book_vector[book_vector_index].set_borrower(_ttoi(member_number_cstr));
+
 	GetDlgItem(ENTERED_MEMBER_REGISTRATION_NUMBER_TO_BORROW)->SetWindowText(_T("회원 번호"));
 	GetDlgItem(ENTERED_BOOK_NUMBER_TO_BORROW)->SetWindowText(_T("책 번호"));
 }
@@ -486,50 +479,45 @@ void CLibraryMnagementProgramDlg::OnBnClickedReturnButton()
 {
 	
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CString book_number_to_return;
+	CString book_number_to_return, cquery, cquery1;;
+	int member_number, member_vector_index, book_vector_index;
 	m_edit_return.GetWindowTextW(book_number_to_return);
+	book_vector_index = get_book_vector_index_by_book_number(_ttoi(book_number_to_return));
+	member_number = book_vector[book_vector_index].get_borrower();
+	member_vector_index = get_member_vector_index_by_member_number(member_number);
 
-	if (book_vector[get_book_vector_index_by_book_number(_ttoi(book_number_to_return))].get_rental_status() == false)
+	if (book_vector[book_vector_index].get_rental_status() == false)
 	{
 		MessageBox(_T("빌린적 없는 책입니다"));
 		return;
 	}
 	else
 	{
-		member_vector[get_member_vector_index_by_member_number(book_vector[get_book_vector_index_by_book_number(_ttoi(book_number_to_return))].get_borrower())].return_book(book_number_to_return);
-		book_vector[get_book_vector_index_by_book_number(_ttoi(book_number_to_return))].returned();
+		member_vector[member_vector_index].return_book(book_number_to_return);
+		book_vector[book_vector_index].returned();
 	}
-	/* 위의 book_vector, member_vector 정보로 db를 업데이트 해야함*/
-	/* member 테이블에서 member vector[]에 저장된 member number 행에서 book_number, book_name 부분을 현재의 vector들로 업데이트 해야됨*/
-	/* 필요한 정보 member_vector[]의 현재 인덱스, book_vector[]의 현재 인덱스*/
-	/* member_vector[]의 현재 인덱스 = get_member_vector_index_by_member_number(book_vector[get_book_vector_index_by_book_number(_ttoi(book_number_to_return))].get_borrower())*/
-	/* 반납하는 사람의 회원번호 = member_vector[get_member_vector_index_by_member_number(book_vector[get_book_vector_index_by_book_number(_ttoi(book_number_to_return))].get_borrower())].get_member_num()*/
-	
-	
-	int member_number = member_vector[get_member_vector_index_by_member_number(book_vector[get_book_vector_index_by_book_number(_ttoi(book_number_to_return))].get_borrower())].get_member_num();
-	int member_vector_index_num = get_member_vector_index_by_member_number(book_vector[get_book_vector_index_by_book_number(_ttoi(book_number_to_return))].get_borrower());
-	CString cquery, cquery1;
 	CString book_number = _T("");
 	CString	book_name = _T("");
 	CString tmp = _T("");
 	
-	for (int i = 0; i < member_vector[member_vector_index_num].get_book_num_vector().size(); i++)
+	for (int i = 0; i < member_vector[member_vector_index].get_book_num_vector().size(); i++)
 	{
 		if (i == 0)
 		{
-			tmp = member_vector[member_vector_index_num].get_book_num_vector()[0];
+			tmp = member_vector[member_vector_index].get_book_num_vector()[0];
 			book_number = tmp;
-			tmp = member_vector[member_vector_index_num].get_book_name_vector()[0];
+			tmp = member_vector[member_vector_index].get_book_name_vector()[0];
 			book_name = tmp;
 		}
 		else
 		{
-			tmp = member_vector[member_vector_index_num].get_book_num_vector()[i];
+			tmp = member_vector[member_vector_index].get_book_num_vector()[i];
 			book_number += _T(",") + tmp;
-			tmp = member_vector[member_vector_index_num].get_book_name_vector()[i];
+			tmp = member_vector[member_vector_index].get_book_name_vector()[i];
 			book_name += _T(",") + tmp;
 		}
 	}
+
 	if (book_number == _T(""))
 	{
 		cquery.Format(_T("UPDATE [dbo].[member]SET [book_number] = '%s',[book_name] = '%s' WHERE [member_number] = %d"), _T(""), _T(""), member_number);
@@ -539,10 +527,8 @@ void CLibraryMnagementProgramDlg::OnBnClickedReturnButton()
 		cquery.Format(_T("UPDATE [dbo].[member]SET [book_number] = '%s',[book_name] = '%s' WHERE [member_number] = %d"), book_number, book_name, member_number);
 	}
 	
-	cquery1.Format(_T("UPDATE [dbo].[book]SET [rental_status] = %d,[borrower] = %d WHERE [book_number] = %d"),
-		book_vector[get_book_vector_index_by_book_number(_ttoi(book_number_to_return))].get_rental_status(),
-		book_vector[get_book_vector_index_by_book_number(_ttoi(book_number_to_return))].get_borrower(),
-		_ttoi(book_number_to_return));
+	cquery1.Format(_T("UPDATE [dbo].[book]SET [rental_status] = %d,[borrower] = %d WHERE [book_number] = %d"),0,0,_ttoi(book_number_to_return));
+
 	/*입력 쿼리 실행*/
 	try
 	{
@@ -550,28 +536,21 @@ void CLibraryMnagementProgramDlg::OnBnClickedReturnButton()
 		db.ExecuteSQL(cquery1);
 		MessageBox(_T("반납 완료"));
 	}
-	catch (CDBException* e) //에러 확인.
+	catch (CDBException* e) 
 	{
 		int errCode = e->ReportError();
 	}
 	
-	member_vector.clear();
-	book_vector.clear();
-	get_all_data_from_member();
-	get_all_data_from_book();
 	GetDlgItem(ENTERED_BOOK_NUMBER_TO_RETURN)->SetWindowText(_T("책 번호"));
-
-	/* 각 테이블 삭제 -> book,member vector로 새로 저장*/
-	/* 새로 저장하고 get_all data ... 으로 프로그램상에 데이터 다시 얻어와야함*/
 }
 
 
 void CLibraryMnagementProgramDlg::OnBnClickedBookRegistrationButton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-		// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	CString book_name_cstr;
 	int new_book_num;
+
 	sort_book_vector(book_vector);
 	if (book_vector.size() == 0)
 	{
@@ -596,10 +575,8 @@ void CLibraryMnagementProgramDlg::OnBnClickedBookRegistrationButton()
 		int errCode = e->ReportError();
 	}
 	GetDlgItem(ENTERED_BOOK_NAME_TO_REGISTRATION_BOOK)->SetWindowText(_T("책 이름"));
-	member_vector.clear();
-	book_vector.clear();
-	get_all_data_from_member();
-	get_all_data_from_book();
+
+	book_vector.push_back(Book(new_book_num, book_name_cstr));
 }
 
 
@@ -622,11 +599,12 @@ void CLibraryMnagementProgramDlg::OnBnClickedBookSearchButton()
 	list_ctrl.InsertColumn(3, _T("대여중인 사람의 회원 번호"), LVCFMT_CENTER, 200, -1);
 
 	list_ctrl.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
-	//for (int i = 0; i < list_ctrl.GetHeaderCtrl()->GetItemCount(); ++i)
-	//	list_ctrl.SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
+	/*
+	for (int i = 0; i < list_ctrl.GetHeaderCtrl()->GetItemCount(); ++i)
+		list_ctrl.SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
+	*/
 
 	sort_book_vector(book_vector);
-
 	CString cstr_book_num, cstr_book_rental_status, borrower;
 
 
@@ -703,8 +681,10 @@ void CLibraryMnagementProgramDlg::OnBnClickedBookListButton()
 	list_ctrl.InsertColumn(3, _T("대여중인 사람의 회원 번호"), LVCFMT_CENTER, 200, -1);
 
 	list_ctrl.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
-	//for (int i = 0; i < list_ctrl.GetHeaderCtrl()->GetItemCount(); ++i)
-	//	list_ctrl.SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
+	/*
+	for (int i = 0; i < list_ctrl.GetHeaderCtrl()->GetItemCount(); ++i)
+		list_ctrl.SetColumnWidth(i, LVSCW_AUTOSIZE_USEHEADER);
+	*/
 
 	sort_book_vector(book_vector);
 	
@@ -864,7 +844,7 @@ void CLibraryMnagementProgramDlg::get_all_data_from_member()
 			rs.GetFieldValue(i, tmp[i]);
 			
 		}
-		LibraryMember library_member(_ttoi(tmp[0]), tmp[1], tmp[2], tmp[3]);
+		Member library_member(_ttoi(tmp[0]), tmp[1], tmp[2], tmp[3]);
 		member_vector.push_back(library_member);
 		//다음 행으로 이동
 		rs.MoveNext();
@@ -958,7 +938,7 @@ bool CLibraryMnagementProgramDlg::is_member_exist(int member_number)
 {
 	for (int i = 0; i < member_vector.size(); i++)
 	{
-		if (member_vector[i].get_member_num() == member_number)
+		if (member_vector[i].get_member_number() == member_number)
 		{
 			return true;
 		}
@@ -966,7 +946,7 @@ bool CLibraryMnagementProgramDlg::is_member_exist(int member_number)
 	return false;
 }
 
-CString CLibraryMnagementProgramDlg::get_books_on_loan_by_member_num(int member_num)
+CString CLibraryMnagementProgramDlg::get_a_list_of_books_on_loan_by_number(int member_num)
 {
 	CString cquery, books_on_loan;
 	cquery.Format(_T("SELECT [book_name]FROM [Library].[dbo].[member] WHERE [member_number] = %d"),member_num);
@@ -998,7 +978,7 @@ CString CLibraryMnagementProgramDlg::get_books_on_loan_by_member_num(int member_
 	return books_on_loan;
 }
 
-CString CLibraryMnagementProgramDlg::get_book_numbers_on_loan_by_member_num(int member_num)
+CString CLibraryMnagementProgramDlg::get_the_numbers_of_the_books_on_loan_byn_umber(int member_num)
 {
 	CString cquery, book_numbers_on_loan;
 	cquery.Format(_T("SELECT [book_number]FROM [Library].[dbo].[member] WHERE [member_number] = %d"), member_num);
@@ -1038,10 +1018,12 @@ CString CLibraryMnagementProgramDlg::get_book_numbers_on_loan_by_member_num(int 
 void CLibraryMnagementProgramDlg::OnBnClickedBookDeleteButton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	int book_vector_index;
 	CString book_number_cstr;
 	CString cquery;
 	m_edit_button_number_to_delete.GetWindowTextW(book_number_cstr);
-	if (book_vector[get_book_vector_index_by_book_number(_ttoi(book_number_cstr))].get_rental_status() == TRUE)
+	book_vector_index = get_book_vector_index_by_book_number(_ttoi(book_number_cstr));
+	if (book_vector[book_vector_index].get_rental_status() == TRUE)
 	{
 		MessageBox(_T("아직 반납되지 않은 책은 삭제할수 없습니다"));
 		GetDlgItem(ENTERED_BOOK_NUMBER_TO_DELETE)->SetWindowText(_T("책 번호"));
@@ -1059,10 +1041,7 @@ void CLibraryMnagementProgramDlg::OnBnClickedBookDeleteButton()
 		int errCode = e->ReportError();
 	}
 	GetDlgItem(ENTERED_BOOK_NUMBER_TO_DELETE)->SetWindowText(_T("책 번호"));
-	member_vector.clear();
-	book_vector.clear();
-	get_all_data_from_member();
-	get_all_data_from_book();
+	book_vector.erase(book_vector.begin() + book_vector_index);
 }
 void CLibraryMnagementProgramDlg::sort_book_vector(vector<Book>& v)
 {
@@ -1081,14 +1060,14 @@ void CLibraryMnagementProgramDlg::sort_book_vector(vector<Book>& v)
 	}
 }
 
-void CLibraryMnagementProgramDlg::sort_member_vector(vector<LibraryMember>& v)
+void CLibraryMnagementProgramDlg::sort_member_vector(vector<Member>& v)
 {
-	LibraryMember temp;
+	Member temp;
 	for (int i = 0; i < v.size(); i++)
 	{
 		for (int j = i + 1; j < v.size(); j++)
 		{
-			if (v[i].get_member_num() > v[j].get_member_num())
+			if (v[i].get_member_number() > v[j].get_member_number())
 			{
 				temp = v[j];
 				v[j] = v[i];
@@ -1131,7 +1110,7 @@ void CLibraryMnagementProgramDlg::OnBnClickedMemberSearchButton()
 			switch (col)
 			{
 			case 0:
-				member_num.Format(_T("%d"), member_vector[index_of_searched_names[row]].get_member_num());
+				member_num.Format(_T("%d"), member_vector[index_of_searched_names[row]].get_member_number());
 				list_ctrl.SetItem(row, col, LVIF_TEXT, member_num, 0, 0, 0, NULL);
 				break;
 			case 1:

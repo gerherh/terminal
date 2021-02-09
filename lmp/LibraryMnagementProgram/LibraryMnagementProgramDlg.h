@@ -50,42 +50,44 @@ public:
 	afx_msg void OnBnClickedBookRegistrationButton();
 	afx_msg void OnBnClickedBookSearchButton();
 	afx_msg void OnBnClickedBookListButton();
-	CListCtrl list_ctrl;
 	afx_msg void OnDestroy();
-	void clear_list_ctrl();
-	CDatabase db;
-	CEdit m_edit_member_name_registration;
-	int get_last_member_num();
-	int get_last_book_num();
-	CEdit m_edit_delete_member;
-	void get_all_data_from_member();
-	void get_all_data_from_book();
-	/*회원 번호 같은걸로 해당 행 업데이트 하는 함수 필요*/
-	void update_at_member_num_row();
-	vector<LibraryMember> member_vector;
-	vector<Book> book_vector;
-	
-	CString get_book_name_by_book_num(int book_number);
-	bool is_book_exist(int book_number);
-	int get_book_vector_index_by_book_number(int book_number);
-	int get_member_vector_index_by_member_number(int member_number);
+	afx_msg void OnBnClickedMemberSearchButton();
+	afx_msg void OnBnClickedBookDeleteButton();
 
-	bool is_member_exist(int member_number);
+	CDatabase db;
+	CListCtrl list_ctrl;
 	CEdit m_edit_rental_book_number;
 	CEdit m_edit_rental_member_number;
 	CEdit m_edit_return;
 	CEdit m_edit_book_registration;
 	CEdit m_edit_book_search;
-	CString get_books_on_loan_by_member_num(int member_num);
-	CString CLibraryMnagementProgramDlg::get_book_numbers_on_loan_by_member_num(int member_num);
-
-	afx_msg void OnBnClickedBookDeleteButton();
+	CEdit m_edit_member_name_registration;
+	CEdit m_edit_delete_member;
 	CEdit m_edit_button_number_to_delete;
-	void sort_book_vector(vector<Book>& v);
-	void sort_member_vector(vector<LibraryMember>& v);
-
 	CEdit m_edit_search;
-	afx_msg void OnBnClickedMemberSearchButton();
+
+	vector<Member> member_vector;
+	vector<Book> book_vector;
+
+	void clear_list_ctrl();
+	void get_all_data_from_member();
+	void get_all_data_from_book();
+	int get_last_member_num();
+	int get_last_book_num();
+	int get_book_vector_index_by_book_number(int book_number);
+	int get_member_vector_index_by_member_number(int member_number);
+	bool is_book_exist(int book_number);
+	bool is_member_exist(int member_number);
+
+	CString get_book_name_by_book_num(int book_number);
+	CString get_a_list_of_books_on_loan_by_number(int member_num);
+	CString get_the_numbers_of_the_books_on_loan_byn_umber(int member_num);
+
+	void sort_book_vector(vector<Book>& v);
+	void sort_member_vector(vector<Member>& v);
+
+
+
 };
 
 

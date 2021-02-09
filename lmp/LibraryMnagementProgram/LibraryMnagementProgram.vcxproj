@@ -212,6 +212,7 @@
     <ResourceCompile Include="LibraryMnagementProgram.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="res\LibraryMnagementProgram.rc2" />
   </ItemGroup>
   <ItemGroup>
