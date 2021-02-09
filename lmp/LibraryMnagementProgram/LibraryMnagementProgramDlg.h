@@ -1,12 +1,15 @@
 ﻿#pragma once
 
 // ODBC API 헤더
-#include <odbcinst.h>
-#include <sqlext.h>
-#include <afxdb.h>
+#include "pch.h"
 #include "LibraryMember.h"
 #include "Books.h"
+#include <odbcinst.h>
+#include <sqlext.h>
 #include <vector>
+#include <algorithm>
+#include <atldbcli.h>
+#include <afxdb.h>
 // CLibraryMnagementProgramDlg 대화 상자
 class CLibraryMnagementProgramDlg : public CDialogEx
 {
@@ -45,7 +48,7 @@ public:
 	afx_msg void OnBnClickedRentalButton();
 	afx_msg void OnBnClickedReturnButton();
 	afx_msg void OnBnClickedBookRegistrationButton();
-	afx_msg void OnBnClickedSearchButton();
+	afx_msg void OnBnClickedBookSearchButton();
 	afx_msg void OnBnClickedBookListButton();
 	CListCtrl list_ctrl;
 	afx_msg void OnDestroy();
@@ -61,6 +64,7 @@ public:
 	void update_at_member_num_row();
 	vector<LibraryMember> member_vector;
 	vector<Book> book_vector;
+	
 	CString get_book_name_by_book_num(int book_number);
 	bool is_book_exist(int book_number);
 	int get_book_vector_index_by_book_number(int book_number);
@@ -77,6 +81,11 @@ public:
 
 	afx_msg void OnBnClickedBookDeleteButton();
 	CEdit m_edit_button_number_to_delete;
+	void sort_book_vector(vector<Book>& v);
+	void sort_member_vector(vector<LibraryMember>& v);
+
+	CEdit m_edit_search;
+	afx_msg void OnBnClickedMemberSearchButton();
 };
 
 

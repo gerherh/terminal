@@ -50,7 +50,7 @@ void LibraryMember::borrow_book(Book& book)
 
 void LibraryMember::return_book(CString book_num)
 {
-	for (int i = 0; i < book_num_vector.size(); i++)
+	for (int i = 0; i < get_book_num_vector().size(); i++)
 	{
 		if (book_num_vector[i] == book_num)
 		{
