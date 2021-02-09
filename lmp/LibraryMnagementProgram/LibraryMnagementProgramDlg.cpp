@@ -243,10 +243,7 @@ void CLibraryMnagementProgramDlg::OnBnClickedMemberRegistrationButton()
 	GetDlgItem(ENTERED_MEMBER_NAME_TO_REGISTRATION)->SetWindowText(_T("이름 입력"));
 	
 	member_vector.push_back(Member(new_member_num, member_name_cstr));
-	//member_vector.clear();
-	//book_vector.clear();
-	//get_all_data_from_member();
-	//get_all_data_from_book();
+
 }
 
 
