@@ -55,7 +55,7 @@ CLibraryMnagementProgramDlg::CLibraryMnagementProgramDlg(CWnd* pParent /*=nullpt
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 	//자신이 설정해주었던 DSN 이름을 쓰고 id,pass를 입력
-	db.OpenEx(_T("DSN=library;UID=mfc;PWD==r2BH+*hkU5yPtpz"));
+	db.OpenEx(_T("DSN=library;UID=mfc;PWD==r2BH+*hkU5yPtpz")); /* 일회용 비밀번호임*/
 	get_all_data_from_member();
 	get_all_data_from_book();
 	
