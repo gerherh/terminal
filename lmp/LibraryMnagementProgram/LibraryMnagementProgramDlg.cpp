@@ -11,7 +11,7 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-#define MAX_COUNT 100
+
 // ODBC API 라이브러리
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
@@ -48,8 +48,6 @@ END_MESSAGE_MAP()
 
 
 // CLibraryMnagementProgramDlg 대화 상자
-
-
 
 CLibraryMnagementProgramDlg::CLibraryMnagementProgramDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_LIBRARYMNAGEMENTPROGRAM_DIALOG, pParent)
@@ -170,7 +168,6 @@ void CLibraryMnagementProgramDlg::OnPaint()
 	if (IsIconic())
 	{
 		CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트입니다.
-
 		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
 		// 클라이언트 사각형에서 아이콘을 가운데에 맞춥니다.
@@ -206,7 +203,6 @@ void CLibraryMnagementProgramDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	/*처음 크기 이상으로 줄어들지는 않게 하는 부분*/
 	lpMMI->ptMinTrackSize.x = m_rcMinimumDialog.Width();
 	lpMMI->ptMinTrackSize.y = m_rcMinimumDialog.Height();
-
 }
 
 /*회원 등록*/
@@ -256,8 +252,9 @@ void CLibraryMnagementProgramDlg::OnBnClickedMemberDeleteButton()
 	m_edit_delete_member.GetWindowTextW(member_number_cstr);
 	if (member_vector[get_member_vector_index_by_member_number(_ttoi(member_number_cstr))].get_book_num_vector()[0] != _T(""))
 	{
-		GetDlgItem(ENTERED_MEMBER_NUMBER_TO_DELETE)->SetWindowText(_T("회원 번호 입력"));
+		
 		MessageBox(_T("책을 반납해야 삭제할수 있습니다"));
+		GetDlgItem(ENTERED_MEMBER_NUMBER_TO_DELETE)->SetWindowText(_T("회원 번호 입력"));
 		return;
 	}
 
