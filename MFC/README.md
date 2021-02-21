@@ -4,8 +4,6 @@
 2. MFC
     * 도서관리 프로그램
 
-2.1 도서관리 프로그램
-
 
 <img src="./img/mfc/lmp.PNG">
 <img src="./img/mfc/lmp(1).PNG">
