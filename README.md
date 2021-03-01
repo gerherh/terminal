@@ -2,7 +2,7 @@
     * 스탑워치
     * 도서관리 프로그램
     * 초음파센서,서보모터,arm보드,
- <img src="./img/window.png">
+ <img src="./img/window.PNG">
 
 ---
 
